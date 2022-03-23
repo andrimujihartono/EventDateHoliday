@@ -2,29 +2,30 @@
 var customDate = DateTime.Now.AddDays(+1);
 DateTime reconDate = customDate.AddDays(-1);
 
-checkHolidays(reconDate.ToString("yyyy-MM-dd"), -1, reconDate.ToString("yyyy-MM-dd"));
-
+int countDay = checkHolidays(reconDate.ToString("yyyy-MM-dd"), -1, reconDate.ToString("yyyy-MM-dd"));
+Console.WriteLine(reconDate.AddDays(countDay));
 static int checkHolidays(string reconDate, int diff , string value)
 {
 
-    var dayOfWeek = DateTime.Now.DayOfWeek;  
+    var dayOfWeek = DateTime.Now.DayOfWeek;
+    var dayOfWeekEnd = Convert.ToDateTime(value).DayOfWeek;
+
     if(dayOfWeek.ToString() == "Monday") { return -3;}
 
     bool dateHolidays = isHoliday(value);
-    if(dateHolidays == false)
+    if(dateHolidays == false && dayOfWeekEnd.ToString() != "Sunday" && dayOfWeekEnd.ToString() != "Saturday")
     {
-        Console.WriteLine("bukan hari libur " + diff);
+        Console.WriteLine("bukan hari libur " + value);
         return diff;
 
     }else{
 
-        DateTime dateNow     = DateTime.Now.AddDays(+1);
-        TimeSpan totalDays   = DateTime.Now.AddDays(+1) - Convert.ToDateTime(getDate(value));
-        int totalDiff   = -totalDays.Days;
-        var newDate     = Convert.ToDateTime(reconDate).AddDays(totalDiff);
+        TimeSpan totalDays   = DateTime.Now.AddDays(+1) - Convert.ToDateTime(value);
+        diff   = -totalDays.Days;
+        var newDate     = Convert.ToDateTime(reconDate).AddDays(diff);
         
-        Console.WriteLine("hari libur " + totalDiff);
-        return checkHolidays(reconDate, totalDiff , newDate.ToString("yyyy-MM-dd"));
+        Console.WriteLine("hari libur " +  diff);
+        return checkHolidays(reconDate, diff , newDate.ToString("yyyy-MM-dd"));
        
     }
 
@@ -34,10 +35,9 @@ static int checkHolidays(string reconDate, int diff , string value)
 static bool isHoliday(string value)
 {
         var dateEvent = new List<string>{
-            "2022-03-20",
-            "2022-03-18",
             "2022-03-23",
             "2022-03-22",
+            "2022-03-21",
         };
         var dateHolidays = dateEvent.Where(x => 
                             x.Contains(value)).FirstOrDefault();
@@ -49,7 +49,7 @@ static string getDate(string value){
         "2022-03-17",
         "2022-03-18",
         "2022-03-23",
-        "2022-03-22"
+        "2022-03-21"
     };
         
     var dateHolidays = dateEvent.Where(x => 
